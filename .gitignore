@@ -14,7 +14,9 @@ node_modules/
 /build
 
 # Environment Variables
-.env*
+.env
+.env.*
+!.env.example
 .env.local
 .env.development.local
 .env.test.local
@@ -28,6 +30,7 @@ yarn-error.log*
 # Misc
 .DS_Store
 *.pem
+Thumbs.db
 
 # Python
 __pycache__/
@@ -35,6 +38,8 @@ __pycache__/
 *$py.class
 backend/.env
 backend/uploads/
+venv/
+*.pyc
 
 # IDE
 .idea/

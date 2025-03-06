@@ -1,0 +1,43 @@
+
+"""
+    example inputs and outputs:
+
+# resume_text = r"""{'name': 'Varun Parmar', 'email': 'varunparmarwork@gmail.com', 'phone': '+91 9549807643', 'education': [{'degree': 'BCA - Bachelor of Computer Application', 'institution': 'JK Lakshmipat University', 'graduation_date': 'April 2025', 'CGPA': '9.35', 'relevant_coursework': ['Fullstack Development', 'DBMS', 'Machine Learning']}], 'work_experience': [{'company': 'Ohilo Games, Jaipur', 'position': 'Machine Learning Engineer', 'start_date': 'May 2024', 'end_date': 'Current', 'responsibilities': ['Conducted in-depth exploration of computer vision models for human pose detection to enhance motion-based gaming experiences.', 'Developed and integrated features such as motion-to-calorie conversion and anti-cheat mechanisms.', 'Achieved a 60 percent improvement in model inference time and a 75 percent reduction in load time.']}, {'company': 'JK Lakshmipat University, Jaipur', 'position': 'Teaching Assistant', 'start_date': 'Jan 2024', 'end_date': 'Apr 2024', 'responsibilities': ['Aided and Taught over 30 students with their C programming Foundation Course.', 'Helped formulate course structure and assignments to ease the learning curve for students.']}], 'skills': ['C', 'C++', 'DSA', 'Java', 'Python', 'Javascript', 'Typescript', 'SQL', 'HTML5', 'CSS', 'Nextjs 14', 'Reactjs', 'Tailwindcss', 'Nodejs', 'MongoDB', 'Prisma ORM', 'Firebase', 'Git', 'Github', 'Figma', 'Blender', 'Unity'], 'certifications': [], 'projects': [{'name': 'emote.io', 'stack': ['OpenCV', 'Python', 'Jupyter Notebook'], 'date': 'April 2024', 'description': 'Created a real-time Emotion Tracker using OpenCV and Python.', 'details': ['Utilized a renowned dataset with 35,000 images spanning 7 emotion classes for model training.', 'Developed a real-time emotion detection model capable of analyzing live video feeds.', 'Achieved efficient preprocessing and augmentation of image data to enhance model accuracy.', 'Conducted extensive testing to validate model performance and ensure reliability in various real-world scenarios.']}, {'name': 'ANNs vs. CNNs', 'stack': ['TensorFlow', 'Python', 'Google Colab'], 'date': 'March 2024', 'description': 'Conducted a comparative study between Convolutional Neural Networks (CNNs) and Artificial Neural Networks (ANNs) to establish use cases, pros, and cons.', 'details': ['Developed and trained multiple models using TensorFlow to compare the performance of CNNs and ANNs.', 'Analyzed metrics such as accuracy and training time efficiency to determine the optimal use cases for each type of neural network.', 'Documented the findings and created visualizations to effectively communicate the results.', 'Utilized Google Colab for efficient model training and experimentation with GPU acceleration.']}], 'achievements': ['Secured Second Position at the CDTI annual Cybersecurity Quiz with participants from 10+ universities.', 'Mentioned in the JKLU Honor’s list thrice for maintaining 8.5+ SGPA.']}"""
+
+
+# questionsandans = [
+#     {
+#         "question": "What are your plans for internships or job opportunities after graduating in April 2025?",
+#         "answer": "Post-graduation, I plan to secure an internship or a full-time position in a tech company to apply my skills in real-world scenarios and further my career in software development."
+#     },
+#     {
+#         "question": "Can you detail the specific outcomes or impacts of your exploration into computer vision models for human pose detection?",
+#         "answer": "not sure"
+#     },
+#     {
+#         "question": "What methodologies or technologies did you use to develop and integrate the features such as motion-to-calorie conversion and anti-cheat mechanisms?",
+#         "answer": "not sure"
+#     },
+# ] 
+
+
+# snipandreason = [
+#     {
+#         "snippet": "Graduation date: April 2025",
+#         "reason": "The graduation date is set in the future. It would be useful to clarify if there is a plan for an internship or job after graduation."
+#     },
+#     {
+#         "snippet": "Conducted in-depth exploration of computer vision models for human pose detection to enhance motion-based gaming experiences.",
+#         "reason": "The specific outcomes or impacts of the exploration could be detailed to show the effectiveness of the work further."
+#     },
+#     {
+#         "snippet": "Developed and integrated features such as motion-to-calorie conversion and anti-cheat mechanisms.",
+#         "reason": "Requiring clarification on the methodology or technology used for these integrations could strengthen this bullet point."
+#     },
+# ]
+
+"""
+
+
+
+        

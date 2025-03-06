@@ -1,0 +1,5 @@
+fastapi
+crewai
+python-multipart
+uvicorn
+dotenv

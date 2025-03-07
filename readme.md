@@ -126,6 +126,11 @@ The application will be available at `http://localhost:3000`
 4. Set build command: `pip install -r requirements.txt`
 5. Set start command: `uvicorn main:app --host 0.0.0.0 --port $PORT`
 
+
+### Application Flow
+<img width="293" alt="Screenshot 2025-03-07 at 1 20 19 PM" src="https://github.com/user-attachments/assets/7bb4092a-e1c1-4a8f-9afb-fd3ea0a42693" />
+
+
 ## 🔒 Security
 
 - API keys are stored in environment variables

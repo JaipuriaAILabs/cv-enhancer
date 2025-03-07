@@ -16,6 +16,7 @@ openai_api_key = os.getenv("OPENAI_API_KEY")
 try:
     gpt = LLM(model="gpt-4o", api_key=openai_api_key)
     claude = LLM(model="claude-3-5-sonnet-20240620", api_key=anthropic_api_key)
+    # meta = LLM(model="llama-3.1-8b-instruct", api_key=meta_api_key)
 except Exception as e:
     raise RuntimeError("Failed to initialize LLM models") from e
 

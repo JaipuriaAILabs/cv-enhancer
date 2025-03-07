@@ -11,6 +11,7 @@ node_modules/
 .next
 /out/
 
+
 # Production
 /build
 
@@ -30,6 +31,7 @@ yarn-error.log*
 
 # Misc
 .DS_Store
+**/.DS_Store
 *.pem
 Thumbs.db
 

@@ -5,7 +5,7 @@ from crew import QuestionAndSnippetGeneratorCrew, ResumeUpdationAndFlowControlCr
 import uvicorn
 from fastapi.middleware.cors import CORSMiddleware
 import json
-from utils.pdf2json import PDF2MarkdownTool
+from utils.pdf2json import PDF2JsonTool
 from utils.markdown2latex import markdown_to_latex
 from datetime import datetime
 import agentops
@@ -13,6 +13,8 @@ import subprocess
 import tempfile
 import requests
 from fastapi.responses import FileResponse
+from pydantic import BaseModel
+from typing import Dict, Any
 
 # Initialize envirsonment and application
 load_dotenv()
@@ -23,10 +25,8 @@ agentops.init(
     api_key=os.getenv("AGENTOPS_API_KEY"),
     default_tags=['crewai']
 )
-
 # counter to check the number of turns. We will stop the execution after 3 turns.
 iteration = 0
-
 
 # Global variables
 pdf_text = ""
@@ -41,6 +41,11 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+class ResponseModel(BaseModel):
+    resume: str
+    questions: Dict[str, Any]
+    snippets: Dict[str, Any]
 
 @app.post("/")
 async def handle_pdf(request: Request):
@@ -70,23 +75,38 @@ async def handle_pdf(request: Request):
         with open(file_path, "wb") as f:
             f.write(pdf_file.read())
             
-        resume_text = PDF2MarkdownTool(file_path)
+        resume_text = PDF2JsonTool(file_path)
+        print("😩 ", resume_text)
         
         # Generate questions using crew
         crew_instance = QuestionAndSnippetGeneratorCrew()
         questions = crew_instance.crew().kickoff(inputs={"resume": resume_text, "today": date, 'evaluation': ""})
-        print("😳", questions)
-        return {"questions": questions, "resume": resume_text}
+        print("0️⃣", questions.tasks_output[0])
+        print("1️⃣", questions.tasks_output[1])
+        
+        # Convert Pydantic models to dictionaries for JSON serialization
+        snippets_dict = questions.tasks_output[0].model_dump()["json_dict"] 
+        questions_dict = questions.tasks_output[1].model_dump()["json_dict"] 
+        
+        # Return a properly structured response
+        return {
+            "resume": resume_text,
+            "questions": questions_dict,
+            "snippets": snippets_dict
+        }
         
     except Exception as e:
         # Log the error in production
+        print(f"Error processing PDF: {str(e)}")
         return {"error": str(e), "message": "Failed to process request"}
+        
+
 
 @app.post("/improve_resume")
 async def improve_resume(request: Request):
     """
     Process resume improvement request using crew system.
-    
+
     Args:
         request (Request): FastAPI request containing resume data and Q&A
         
@@ -101,7 +121,7 @@ async def improve_resume(request: Request):
         iteration = iteration + 1
         data = await request.json()
         crew_instance = ResumeUpdationAndFlowControlCrew()
-        improved_resume = crew_instance.crew().kickoff(
+        improved_resume_and_evaluation = crew_instance.crew().kickoff(
             inputs={
                 "resume": data["Resume"],
                 "snipandreason": data["Snippets"],
@@ -109,16 +129,24 @@ async def improve_resume(request: Request):
             }
         )
 
-        print("🔄", improved_resume, iteration)
-        return improved_resume
+        improved_resume = improved_resume_and_evaluation.tasks_output[0].model_dump()["json_dict"] 
+        evaluation = improved_resume_and_evaluation.tasks_output[1].model_dump()["raw"]
+
+        print("🔄", improved_resume, evaluation)
+
+        return {
+            "improved_resume": improved_resume,
+            "evaluation": evaluation
+        }
         
         
     except Exception as e:
         # Log the error in production
+        print(f"Error improving resume: {str(e)}")
         return {"error": str(e), "message": "Failed to improve resume"}
 
-@app.post("/enhance_more")
-async def enhance_more(request: Request):
+@app.post("/generate_more_questions")
+async def generate_more_questions(request: Request):
     """
     Generate additional questions for resume enhancement.
     
@@ -131,16 +159,26 @@ async def enhance_more(request: Request):
     Raises:
         Exception: For question generation failures
     """
+    #hi
     try:
         data = await request.json()
         crew_instance = QuestionAndSnippetGeneratorCrew()
         questions = crew_instance.crew().kickoff(
             inputs={"resume": data["Resume"], "today": date, "evaluation": "Make sure to ask questions based on the following evaluation: " + " ".join(data["Evaluation"])}
         )
-        return questions
+        
+        # Convert Pydantic models to dictionaries for JSON serialization
+        snippets_dict = questions.tasks_output[0].model_dump()["json_dict"]
+        questions_dict = questions.tasks_output[1].model_dump()["json_dict"]
+        
+        return {
+            "questions": questions_dict,
+            "snippets": snippets_dict
+        }
         
     except Exception as e:
         # Log the error in production
+        print(f"Error generating more questions: {str(e)}")
         return {"error": str(e), "message": "Failed to generate questions"}
 
 @app.post("/download_enhanced_resume")
@@ -182,6 +220,7 @@ async def download_enhanced_resume(request: Request):
         
     except Exception as e:
         # Log the error in production
+        print(f"Error downloading resume: {str(e)}")
         return {"error": str(e), "message": "Failed to download enhanced resume"}
 
 

@@ -14,18 +14,17 @@ update_resume_content_task:
    - Enhance the overall quality and professionalism of the resume
    - Maintain consistency with the rest of the resume content
 
-  expected_output: the entire resume with the updated snippets, same output as the input output, i.e., MARKDOWN.
+  expected_output: >
+    A JSON object with the updated resume content. JSON Should follow the JSON structure of the ResumeModel.
   example_output: >
-    ```markdown
-    # John Doe
-    johndoe@gmail.com
-    +91 9876543210
-
-    ## Education
-    - Bachelor of Science in Computer Science
-    - Master of Business Administration...
-    ```
-      
+    {
+    "personalInfo": {
+      "name": "John Doe",
+      "email": "johndoe@gmail.com",
+      "contactNo": "+91 9876543210"
+    }
+    ...
+    }   
   async_execution: false
   agent: response_updater
 

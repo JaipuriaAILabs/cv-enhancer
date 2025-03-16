@@ -48,3 +48,45 @@ generate_questions_task:
   agent: question_generator
   context:
     - snippet_identification_task
+
+# update_resume_content_task:
+#   description: >
+#    Modify the resume content directly based on:
+#    - The snippets ({snipandreason}) of the actual resume listed with their corresponding issues
+#    - Questions and their answers ({questionsandans}) that are based on these snippets
+#    - The original resume content ({resume})
+
+#     **!!! IMPORTANT !!!**
+#     - IF THE USER HAS NOT PROVIDED ANY ANSWERS, LEAVE THE RESUME AS IT IS.
+#     - YOU ARE NOT ALLOWED TO MAKE UP ANY ANSWERS OR INFORMATION, YOU HAVE TO USE THE ONES PROVIDED BY THE USER.
+   
+#    Use these inputs to:
+#    - Update the problematic snippets using the provided answers
+#    - Enhance the overall quality and professionalism of the resume
+#    - Maintain consistency with the rest of the resume content
+
+#   expected_output: the entire resume with the updated snippets, same output as the input output, i.e., MARKDOWN.
+#   example_output: >
+#     ```markdown
+#     # John Doe
+#     johndoe@gmail.com
+#     +91 9876543210
+
+#     ## Education
+#     - Bachelor of Science in Computer Science
+#     - Master of Business Administration...
+#     ```
+      
+#   async_execution: false
+#   agent: response_updater
+
+# iterate_process_task:
+#   description: You manage the process control of this entire resume updation task. You will be given the old and new resume and need to check if the resume is industry ready or not. You need to be critial and mae sure to say False if you find any issues in the resume.
+#   expected_output:  a True or False value, with the reasoning for your answer.
+#   example_output: >
+#     True
+#     The resume is industry ready, because it meets all the industry standards.
+#   async_execution: false
+#   agent: iteration_manager
+#   context:
+#     - update_resume_content_task

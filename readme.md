@@ -1,12 +1,36 @@
-# CV Enhancer - AI-Powered Resume Improvement Platform
+# CV Enhancer - AI-Powered Resume Improvement
 
-CV Enhancer is a full-stack application that helps users improve their resumes through AI-powered analysis and suggestions. The platform uses advanced language models to analyze resumes, generate targeted questions, and provide enhancement suggestions.
+![Resume Enhancer Screenshot](https://example.com/screenshot1.png)
+![Resume Analysis Demo](https://example.com/screenshot2.png)
+![Enhancement Suggestions](https://example.com/screenshot3.png)
+
+## 📋 What is Resume Enhancer?
+
+Resume Enhancer is an intelligent platform that helps job seekers improve their resumes through AI-powered analysis and personalized suggestions. Our application uses advanced AI-Agents to analyze your resume, identify improvement opportunities, and provide actionable recommendations.
+
+## 🌟 Why Use Resume Enhancer?
+- **Build a Stronger Resume**: Learn how to present academic projects and limited work experience effectively
+- **Highlight Relevant Skills**: Identify and emphasize the skills that matter most for your target roles
+- **Prepare for Job Market**: Get guidance on how to position yourself competitively as you enter the workforce
+- **Continuous Improvement**: Refine your resume as you gain new experiences throughout your academic career
+
+## 🚀 How It Works
+
+1. **Upload Your Resume**: Simply upload your current resume in PDF format
+2. **AI Analysis**: Our AI system analyzes your document for structure, content, and impact
+3. **Answer Questions**: Respond to targeted questions about your experience to provide more context
+4. **Get Recommendations**: Receive specific suggestions to enhance each section of your resume
+5. **Download & Apply**: Download the refined resume as a word file and 
 
 ## 🌐 Live Demo
 - Frontend: [https://cv-enhancer.vercel.app](https://cv-enhancer.vercel.app)
 - Backend API: [https://cv-enhancer-backend.onrender.com](https://cv-enhancer-backend.onrender.com)
 
-## 🏗️ Architecture
+---
+
+## 👨‍💻 For Developers
+
+### 🏗️ Architecture
 
 The project is split into two main components:
 - Frontend: Next.js application deployed on Vercel
@@ -23,6 +47,16 @@ The frontend is built with Next.js and provides a modern, responsive user interf
 - React Markdown
 - Axios for API calls
 
+### Backend (FastAPI)
+
+The backend is powered by FastAPI and orchestrates AI agents to process resumes and generate improvements.
+
+#### Key Technologies
+- FastAPI
+- CrewAI for agent orchestration
+- Anthropic Claude and OpenAI models
+- PyPDF2 for PDF processing
+- Pydantic for data validation
 
 ## 🚀 Getting Started
 
@@ -148,14 +182,12 @@ The application will be available at `http://localhost:3000`
 
 ## 📝 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the JaipuriaAI License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
+## 🙏 Third-Party Libraries
 
 - [CrewAI](https://github.com/joaomdmoura/crewAI)
 - [Anthropic Claude](https://www.anthropic.com/)
 - [OpenAI](https://openai.com/)
 - [Next.js](https://nextjs.org/)
 - [FastAPI](https://fastapi.tiangolo.com/)
-
-

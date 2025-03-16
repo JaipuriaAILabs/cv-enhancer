@@ -6,13 +6,7 @@ body{
     background-color: #f8f2f2;
 }
 
-button{
-     background-color: #ef7f1a;
-}
 
-button:hover{
-    background-color: #ce6f1c;
-}
 
 .markdown-container {
     padding: 20px;

@@ -10,10 +10,10 @@ interface HomeProps {
 const Home = ({handleFileChange, handleUpload, loading, file}: HomeProps) => {
   return (
     <>  
-    <div className="flex justify-center items-center h-screen max-w-[50vw] mx-auto">
+    <div className="flex justify-center items-center h-screen max-w-[50vw] mx-auto col-span-2">
       <div className="flex flex-col items-center">
         
-        <label htmlFor="file-upload" className={`items-center justify-center mx-auto mb-4 w-[360px] h-[512px] cursor-pointer  rounded-md  duration-200 text-white font-bold py-2 px-4 flex-col flex gap-4 group ${file==null ? "bg-[#f5ba90]" : "bg-[#ef7f1a]"}`}>
+        <label htmlFor="file-upload" className={`items-center justify-center mx-auto mb-4 w-[360px] h-[512px] cursor-pointer  rounded-md  duration-200 text-white font-bold py-2 px-4 flex-col flex gap-4 group ${file==null ? "bg-black/50" : "bg-black"}`}>
         {
           !file ? (
             <div className=' items-center flex flex-col'>
@@ -30,7 +30,7 @@ const Home = ({handleFileChange, handleUpload, loading, file}: HomeProps) => {
        
         </label>
         <input id="file-upload" type="file" accept="application/pdf" onChange={handleFileChange} className="hidden" />
-        <button onClick={handleUpload} disabled={loading || !file} className="  duration-200 mt-4 text-white font-bold py-2 px-4 rounded disabled:opacity-50">
+        <button onClick={handleUpload} disabled={loading || !file} className={`rounded-full  duration-200 mt-4 text-white font-bold py-2 px-4  disabled:opacity-50 ${loading ? "bg-gray-400" : "bg-black"}`}>
           {loading ? "Generating..." : "Generate Questions"}
         </button>
       </div>

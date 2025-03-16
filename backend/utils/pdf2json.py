@@ -1,4 +1,3 @@
-from typing import Type
 import json
 import PyPDF2
 from crewai.tools import BaseTool
@@ -6,7 +5,7 @@ from pydantic import BaseModel, Field
 import os
 from openai import OpenAI
 from dotenv import load_dotenv
-
+# from backend.models.resume_mode import ResumeModel    
 
 load_dotenv()
 
@@ -14,94 +13,112 @@ load_dotenv()
 client = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
 MODEL = "gpt-4o-mini"
 
+from pydantic import BaseModel
+from typing import List, Optional
+from datetime import date
 
-# def PDF2JSONTool(pdf_path: str) -> dict:
-#     """
-#     A tool for converting PDF resumes to structured JSON format.
+"""
+JSON structure of the ResumeModel:
+{
+  "personalInfo": {
+    "name": "",
+    "email": "",
+    "linkedinId": "",
+    "contactNo": "",
+    "dob": "",
+    "address": ""
+  },
+  "education": [
+    {
+      "title": "",
+      "period": "",
+      "institution": "",
+      "percentage": ""
+    }
+  ],
+  "academicAchievements": [""],
+  "certifications": [
+    {
+      "title": "",
+      "organization": "",
+      "period": ""
+    }
+  ],
+  "projects": [
+    {
+      "title": "",
+      "organization": "",
+      "duration": "",
+      "period": "",
+      "description": "",
+      "learning": [""],
+      "skillsDeveloped": ""
+    }
+  ],
+  "achievements": [""],
+  "skills": [""],
+  "experience": [
+    {
+      "title": "",
+      "organization": "",
+      "duration": "",
+      "period": "",
+      "description": [""]
+    }
+  ]
+}
+"""
 
-#     Args:
-#         pdf_path (str): Path to the PDF resume file to be processed
-
-#     Returns:
-#         dict: A structured JSON object containing parsed resume information with fields for:
-#             - name
-#             - email 
-#             - phone
-#             - education
-#             - work_experience
-#             - skills
-#             - certifications
-#             - projects
-#             - achievements
-            
-#     Raises:
-#         Exception: If there are errors reading the PDF file or extracting text
-#     """
-#     pdf_text = ""
-
-#     try:
-#         # Open the PDF file
-#         with open(pdf_path, 'rb') as file:
-#             # Create PDF reader object
-#             pdf_reader = PyPDF2.PdfReader(file)
-            
-#             # Initialize empty string for content
-#             content = ""
-            
-#             # Iterate through pages and extract text
-#             for page in pdf_reader.pages:
-#                 extracted_text = page.extract_text()
-#                 if extracted_text:
-#                     content += extracted_text
-            
-#             pdf_text = content
-
-#     except Exception as e:
-#         print(f"Error extracting text from PDF: {e}")
-#         return {}
-
-#     prompt = """
-#     Extract the following information from the resume in JSON format:
-#     {
-#         "name": "",
-#         "email": "",
-#         "phone": "",
-#         "education": [],
-#         "work_experience": [],
-#         "skills": [],
-#         "certifications": [],
-#         "projects": [],
-#         "achievements": []
-#     }
-#     If any field is not found, leave it empty.
-#     If you believe there is a field that should be added to the JSON, as it has valuable information, add it.
-#     Return only the JSON object, no additional text.
-#     """
-
-#     try:
-#         # Assuming `client` and `MODEL` are properly set up
-#         response = client.chat.completions.create(
-#             model=MODEL,
-#             messages=[
-#                 {"role": "system", "content": "You are a precise JSON extractor. Extract information in the exact JSON format requested. Only return the JSON object, no additional text or markdown."},
-#                 {"role": "user", "content": prompt + "\n\nResume:\n" + pdf_text}
-#             ],
-#             temperature=0.1,
-#             response_format={ "type": "json_object" },
-#         )
-#         return json.loads(response.choices[0].message.content)
-
-#     except Exception as e:
-#         print(f"Error extracting resume metadata: {e}")
-#         return {}
+class PersonalInfo(BaseModel):
+    name: str 
+    email: str 
+    linkedinId: str 
+    contactNo: str 
+    dob: str 
+    address: str 
 
 
-# output = PDF2JSONTool(pdf_path="Varun Resume.pdf")
-# print(output)
+class Education(BaseModel):
+    title: str 
+    period: str 
+    institution: str 
+    percentage: str 
+
+
+class Project(BaseModel):
+    title: str 
+    organization: str 
+    duration: str 
+    period: str 
+    description: str 
+    learning: List[str] 
+    skillsDeveloped: str 
+
+class Certification(BaseModel):
+    title: str 
+    organization: str 
+    period: str 
+
+class Experience(BaseModel):
+    title: str 
+    organization: str 
+    duration: str 
+    period: str 
+    description: List[str]
+    
+class ResumeModel(BaseModel):
+    personalInfo: PersonalInfo 
+    education: List[Education] 
+    academicAchievements: List[str] 
+    certifications: List[Certification] 
+    projects: List[Project] 
+    achievements: List[str] 
+    skills: List[str] 
+    experience: List[Experience] 
 
 
 
-def PDF2MarkdownTool(pdf_path: str) -> str:
+def PDF2JsonTool(pdf_path: str) -> str:
     """
     A tool for converting PDF resumes to structured markdown format.
 
@@ -158,21 +175,90 @@ def PDF2MarkdownTool(pdf_path: str) -> str:
     """
 
     try:
-        response = client.chat.completions.create(
+        completion = client.chat.completions.create(
             model=MODEL,
             messages=[
                 {"role": "system", "content": "You are a precise Markdown extractor. Extract information in the exact Markdown format requested. Only return the Markdown output, no additional text or markdown."},
                 {"role": "user", "content": prompt + "\n\nResume:\n" + pdf_text}
             ],
-            temperature=0.1,
-            response_format={ "type": "text" },
+            temperature=0.1
         )
-        print(response.choices[0].message.content)
-        return response.choices[0].message.content
+        
+        markdown_output = completion.choices[0].message.content
+        
+        # Now convert the markdown to our ResumeModel format
+        resume_json_prompt = """
+        Convert the following resume markdown into a structured JSON format that matches this schema:
+        
+        ```
+        {
+          "personalInfo": {
+            "name": "",
+            "email": "",
+            "linkedinId": "",
+            "contactNo": "",
+            "dob": "",
+            "address": ""
+          },
+          "education": [
+            {
+              "title": "",
+              "period": "",
+              "institution": "",
+              "percentage": ""
+            }
+          ],
+          "academicAchievements": [],
+          "certifications": [
+            {
+              "title": "",
+              "organization": "",
+              "period": ""
+            }
+          ],
+          "projects": [
+            {
+              "title": "",
+              "organization": "",
+              "duration": "",
+              "period": "",
+              "description": "",
+              "learning": [],
+              "skillsDeveloped": ""
+            }
+          ],
+          "achievements": [],
+          "skills": [],
+          "experience": [
+            {
+              "title": "",
+              "organization": "",
+              "duration": "",
+              "period": "",
+              "description": []
+            }
+          ]
+        }
+        ```
+        
+        Only return the valid JSON, no additional text.
+        """
+        
+        json_completion = client.beta.chat.completions.parse(
+            model=MODEL,
+            messages=[
+                {"role": "system", "content": "You are a precise JSON converter. Extract information from markdown into the exact JSON format requested."},
+                {"role": "user", "content": resume_json_prompt + "\n\nMarkdown Resume:\n" + markdown_output}
+            ],
+            temperature=0.1,
+            response_format=ResumeModel
+        )
+        
+        resume_json = json_completion.choices[0].message.parsed 
+        return resume_json.model_dump()
 
     except Exception as e:
-        print(f"Error extracting resume metadata: {e}")
-        return {}
+        raise Exception(f"Error extracting resume metadata: {e}")
 
 
-# print(PDF2MarkdownTool(pdf_path="../uploads/BlackRock_CV.pdf"))
+# print(PDF2JsonTool(pdf_path="../uploads/BlackRock_CV.pdf"))

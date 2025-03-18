@@ -1,7 +1,10 @@
-import nextConfig from '@/next.config';
+"use client"
+
 import { AnimatePresence, motion } from 'motion/react';
-import { div } from 'motion/react-client';
 import React, { useState, useEffect } from 'react'
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import resumeStore from "@/store/store"
 
 const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSnippets, evaluation, setEvaluation }) => {
 
@@ -11,6 +14,12 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
   const [counter, setCounter] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loadingIndex, setLoadingIndex] = useState(0);
+
+  const router = useRouter();
+
+  const { 
+    setEntireState
+  } = resumeStore();
 
   const loadingArray = [
     "Analyzing your resume",
@@ -24,6 +33,12 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
     setFormData(questions.map(question => ({ question, answer: '' })));
   }, [questions]);
 
+
+  const handleEditResume = () => {
+    setEntireState(resume);
+    router.push("/edit")
+    // alert("Resume set");
+  }
 
   const handleInputChange = (index, value) => {
     const newFormData = [...formData];
@@ -225,7 +240,7 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
                 transition={{ duration: 0.3 }}
                 className='flex items-center gap-2'
               >
-                <p className='text-black text-2xl w-fit italic font-bold'>{currentQuestionIndex + 1})</p>
+                <p className='text-white bg-black rounded-full mx-auto flex w-8 h-8 items-center justify-center text-lg italic font-bold'>{currentQuestionIndex + 1}</p>
                 <p className='text-black text-lg w-fit'>{formData[currentQuestionIndex].question}</p>
               </motion.div>
             )}
@@ -303,13 +318,13 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
           <div className='flex  gap-2'>
 
 
-            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-orange-500 duration-100 ">
+            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
               Generate More Questions
             </button>
-            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-orange-500 duration-100 ">
+            <button onClick={handleEditResume} className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
               Edit Resume
             </button>
-            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-orange-500 duration-100 ">
+            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
               Download Resume
             </button>
           </div>
@@ -321,21 +336,15 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
           <p className='text-3xl font-bold'>✅ Your Resume is good to go!</p>
           <p className='text-xl'>You can either download it or edit it first</p>
           <div className='flex  gap-2'>
-            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-orange-500 duration-100 ">
+            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
               Download Resume
             </button>
-            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-orange-500 duration-100 ">
+            <button onClick={handleEditResume} className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
               Edit Resume
             </button>
           </div>
         </div>
       )}
-
-
-
-
-
-
 
       {showConfirmModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">

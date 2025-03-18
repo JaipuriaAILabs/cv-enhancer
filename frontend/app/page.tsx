@@ -5,6 +5,9 @@ import Home from "./components/Home";
 import Questions from "./components/Questions";
 import ResumeRenderer from "./components/ResumeRenderer";
 
+import { useRouter } from 'next/router'
+
+
 export default function PDFUploader() {
   const [file, setFile] = useState<File | null>(null);
   const [questions, setQuestions] = useState<Array<{ question: string }>>([]);  
@@ -63,6 +66,8 @@ export default function PDFUploader() {
     console.log("snippets", snippets);
     console.log("resume", resume);
   }, [questions, snippets, resume]);
+
+  
 
   return (
     <div className="grid grid-cols-2 gap-4 max-h-screen">      

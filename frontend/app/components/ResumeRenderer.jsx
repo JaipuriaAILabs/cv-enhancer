@@ -1,18 +1,22 @@
 import React from "react";
+import { useRouter } from 'next/navigation';
 
 const ResumeRenderer = ({ resume_json }) => {
-
- 
-  
-  
+  const router = useRouter();
 
   return (
+
     <div className="m-4 p-4 border  font-sans bg-white max-h-screen overflow-y-scroll">
-      <div className="mb-8">
-        <h2 className="text-4xl font-bold">{resume_json.personalInfo.name}</h2>
+      <div className="mb-8 flex gap-4">
+        <div>
+          <img src="https://picsum.photos/150/200" alt="" />
+        </div>
+        <div>
+        <h2 className="text-3xl font-bold">{resume_json.personalInfo.name}</h2>
         <p className="text-lg">{resume_json.personalInfo.email}</p>
         <p className="text-lg">{resume_json.personalInfo.contactNo}</p>
         <p className="text-lg">{resume_json.personalInfo.linkedinId}</p>
+        </div>
       </div>
 
       <div className="mb-8">

@@ -1,10 +1,16 @@
 import Image from "next/image";
-import Client from "@/app/components/ResumeEditor/Client";
+import Client from "@/components/resume_editor/Client";
+import GeometricBackground from "@/components/GeometricBackground";
 
 
 export default function Edit() {
+
+
+  
+
   return (
-    <div className="">
+    <div className="relative">
+      <GeometricBackground />
       <Client />
     </div>
   );

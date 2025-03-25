@@ -2,10 +2,55 @@
 @tailwind components;
 @tailwind utilities;
 
-body{
-    background-color: #f8f2f2;
+
+@font-face {
+  font-family: 'TT-Regular';
+  src: url('/fonts/tt_regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
 }
 
+@font-face {
+  font-family: 'TT-Bold';
+  src: url('/fonts/tt_bold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT-Medium';
+  src: url('/fonts/tt_medium.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT-DemiBold';
+  src: url('/fonts/tt_demibold.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'TT-Light';
+  src: url('/fonts/tt_light.woff') format('woff');
+  font-weight: normal;
+  
+  font-style: normal;
+  font-display: swap;
+}
+
+
+
+
+body{
+    background-color: #f8f2f2;
+    font-family: 'TT-Regular';
+}
 
 
 .markdown-container {
@@ -20,3 +65,42 @@ body{
     color: white;
   }
   
+
+  @keyframes gradient-move {
+    0% {
+      background-position: 0% -50%;
+    }
+    100% {
+      background-position: -200% -50%;
+    }
+  }
+  
+  .animate-gradient-x {
+    background-size: 200% 200%;
+    animation: gradient-move 2s linear infinite;
+  }
+  
+
+  input{
+    background-color: #F0E5E5;
+    border: 1px dashed #e2d6d6;
+    border-radius: 4px;
+    padding: 10px;
+  }
+
+
+  input:focus{
+    outline: none;
+  }
+
+  textarea{
+    background-color: #F0E5E5;
+    border: 1px dashed #e2d6d6;
+    border-radius: 6px;
+    
+   
+  }
+  
+  textarea:focus{
+    outline: none;
+  }

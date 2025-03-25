@@ -70,13 +70,36 @@ JSON structure of the ResumeModel:
 """
 
 class PersonalInfo(BaseModel):
-    name: str 
-    email: str 
-    linkedinId: str 
-    contactNo: str 
-    dob: str 
-    address: str 
+    #image?
+    name: str
+    course: str
+    summary: str
+    email: str
+    contactNo: str
+    linkedinId: str
 
+
+
+
+
+class Internship(BaseModel):
+    organization: str 
+    duration: str 
+    location: str 
+    period: str 
+    summary: str 
+    keypoints: List[str]
+
+
+class Project(BaseModel):
+    title: str 
+    organization: str 
+    duration: str 
+    period: str 
+    summary: str 
+    keypoints: List[str] 
+    learning: List[str] 
+    skillsDeveloped: str 
 
 class Education(BaseModel):
     title: str 
@@ -85,36 +108,33 @@ class Education(BaseModel):
     percentage: str 
 
 
-class Project(BaseModel):
+class Achievement(BaseModel):
     title: str 
     organization: str 
-    duration: str 
-    period: str 
-    description: str 
-    learning: List[str] 
-    skillsDeveloped: str 
+    date: str 
+    summary: str 
+    keypoints: List[str] 
+
+
+
 
 class Certification(BaseModel):
     title: str 
     organization: str 
     period: str 
 
-class Experience(BaseModel):
-    title: str 
-    organization: str 
-    duration: str 
-    period: str 
-    description: List[str]
     
 class ResumeModel(BaseModel):
-    personalInfo: PersonalInfo 
-    education: List[Education] 
-    academicAchievements: List[str] 
-    certifications: List[Certification] 
-    projects: List[Project] 
-    achievements: List[str] 
-    skills: List[str] 
-    experience: List[Experience] 
+    personalInfo: PersonalInfo  
+    education: List[Education]
+    certifications: List[Certification]  
+    projects: List[Project]  
+    achievements: List[Achievement]  
+    skills: List[str]  
+    languages: List[str]  
+    interests: List[str]  
+    internships: List[Internship]  
+
 
 
 
@@ -191,53 +211,64 @@ def PDF2JsonTool(pdf_path: str) -> str:
         Convert the following resume markdown into a structured JSON format that matches this schema:
         
         ```
-        {
-          "personalInfo": {
-            "name": "",
-            "email": "",
-            "linkedinId": "",
-            "contactNo": "",
-            "dob": "",
-            "address": ""
-          },
-          "education": [
             {
-              "title": "",
-              "period": "",
-              "institution": "",
-              "percentage": ""
-            }
-          ],
-          "academicAchievements": [],
-          "certifications": [
-            {
-              "title": "",
-              "organization": "",
-              "period": ""
-            }
-          ],
-          "projects": [
-            {
-              "title": "",
-              "organization": "",
-              "duration": "",
-              "period": "",
-              "description": "",
-              "learning": [],
-              "skillsDeveloped": ""
-            }
-          ],
-          "achievements": [],
-          "skills": [],
-          "experience": [
-            {
-              "title": "",
-              "organization": "",
-              "duration": "",
-              "period": "",
-              "description": []
-            }
-          ]
+        "personalInfo": {
+          "name": "",
+          "email": "",
+          "linkedinId": "",
+          "contactNo": "",
+          "course": "",
+          "summary": ""
+        },
+        "education": [
+          {
+            "title": "",
+            "institution": "",
+            "period": "",
+            "percentage": ""
+          }
+        ],
+        "certifications": [
+          {
+            "title": "",
+            "organization": "",
+            "period": ""
+          }
+        ],
+        "projects": [
+          {
+            "title": "",
+            "organization": "",
+            "duration": "",
+            "period": "",
+            "summary": "",
+            "keypoints": [""],
+            "learning": [""],
+            "skillsDeveloped": ""
+          }
+        ],
+        "achievements": [
+          {
+            "title": "",
+            "organization": "",
+            "date": "",
+            "summary": "",
+            "keypoints": [""]
+          }
+        ],
+        "skills": [""],
+        "languages": [""],
+        "interests": [""],
+        "internships": [
+          {
+            "organization": "",
+            "duration": "",
+            "location": "",
+            "period": "",
+            "summary": "",
+            "keypoints": [""]
+          }
+        ]
         }
         ```
         
@@ -247,7 +278,7 @@ def PDF2JsonTool(pdf_path: str) -> str:
         json_completion = client.beta.chat.completions.parse(
             model=MODEL,
             messages=[
-                {"role": "system", "content": "You are a precise JSON converter. Extract information from markdown into the exact JSON format requested."},
+                {"role": "system", "content": "You are a precise JSON converter. Extract information from markdown into the exact JSON format requested. Do not add any additional information to the JSON."},
                 {"role": "user", "content": resume_json_prompt + "\n\nMarkdown Resume:\n" + markdown_output}
             ],
             temperature=0.1,
@@ -261,4 +292,4 @@ def PDF2JsonTool(pdf_path: str) -> str:
         raise Exception(f"Error extracting resume metadata: {e}")
 
 
-# print(PDF2JsonTool(pdf_path="../uploads/BlackRock_CV.pdf"))
+print(PDF2JsonTool(pdf_path="../uploads/Ananya_Singh_CV.pdf"))

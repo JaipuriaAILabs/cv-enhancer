@@ -4,21 +4,32 @@ import { AnimatePresence, motion } from 'motion/react';
 import React, { useState, useEffect } from 'react'
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import resumeStore from "@/store/store"
+import resumeStore from "@/store/resume_store"
+import QnaSnipEvalStore from '@/store/qna_snip_eval_store';
+import { div } from 'motion/react-client';
 
-const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSnippets, evaluation, setEvaluation }) => {
+const Questions = ({ questions, 
+                    snippets,
+                    resume,
+                    setResume,
+                    setQuestions, 
+                    setSnippets, 
+                    evaluation, 
+                    setEvaluation,
+                    loading
+                  }) => {
 
   const [formData, setFormData] = useState(questions.map(question => ({ question, answer: '' })));
-  const [loading, setLoading] = useState(false);
   const [nextIteration, setNextIteration] = useState("null");
   const [counter, setCounter] = useState(0);
   const [showConfirmModal, setShowConfirmModal] = useState(false);
   const [loadingIndex, setLoadingIndex] = useState(0);
 
+  const { setLoading } = QnaSnipEvalStore();
   const router = useRouter();
 
   const { 
-    setEntireState
+    setResumeData
   } = resumeStore();
 
   const loadingArray = [
@@ -33,12 +44,6 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
     setFormData(questions.map(question => ({ question, answer: '' })));
   }, [questions]);
 
-
-  const handleEditResume = () => {
-    setEntireState(resume);
-    router.push("/edit")
-    // alert("Resume set");
-  }
 
   const handleInputChange = (index, value) => {
     const newFormData = [...formData];
@@ -75,7 +80,7 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
         body: JSON.stringify({
           QuestionsAndAnswers: formData,
           Snippets: snippets,
-          Resume: resume
+          Resume: convertJsonToString(resume)
         })
       });
       setCounter(counter + 1);
@@ -116,7 +121,7 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          Resume: resume,
+          Resume: convertJsonToString(resume),
           Evaluation: evaluation
         })
       });
@@ -131,40 +136,62 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
     }
   };
 
-  const handleDownloadEnhancedResume = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    try {
-      const response = await fetch('http://localhost:8000/download_enhanced_resume', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          Resume: resume
-        })
+  
+
+
+function convertJsonToString(data) {
+  function processItem(key, value, indent = 0) {
+    let result = "";
+    const spacer = "  ".repeat(indent);
+
+    if (Array.isArray(value)) {
+      if (value.length === 0) return "";
+      result += `${spacer}${key}:\n`;
+      value.forEach(item => {
+        result += processItem("", item, indent + 1);
       });
-
-      if (!response.ok) {
-        throw new Error('Failed to download resume');
+    } else if (typeof value === 'object' && value !== null) {
+      if (Object.keys(value).length === 0) return "";
+      if (key) result += `${spacer}${key}:\n`;
+      for (const subKey in value) {
+        if (value[subKey] !== null && value[subKey] !== "" && 
+            !(Array.isArray(value[subKey]) && value[subKey].length === 0)) {
+          result += processItem(formatKey(subKey), value[subKey], indent + 1);
+        }
       }
+    } else {
+      if (key) {
+        result += `${spacer}${key}: ${value}\n`;
+      } else {
+        result += `${spacer}- ${value}\n`;
+      }
+    }
 
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.style.display = 'none';
-      a.href = url;
-      a.download = 'Enhanced_Resume.docx';
-      document.body.appendChild(a);
-      a.click();
-      window.URL.revokeObjectURL(url);
-      document.body.removeChild(a);
-    } catch (error) {
-      console.error("Error downloading resume:", error);
-    } finally {
-      setLoading(false);
+    return result;
+  }
+
+  function formatKey(key) {
+    // Optional: Make keys more readable (e.g., linkedinId -> LinkedIn)
+    if (key.toLowerCase().includes("linkedin")) return "LinkedIn";
+    return key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1').trim();
+  }
+
+  let output = "";
+  for (const key in data) {
+    const value = data[key];
+    if (value !== null && value !== "" && 
+        !(Array.isArray(value) && value.length === 0) &&
+        !(typeof value === 'object' && !Array.isArray(value) && Object.keys(value).length === 0)) {
+      output += processItem(formatKey(key), value);
     }
   }
+
+  return output.trim();
+}
+
+
+
+
 
   console.log(nextIteration)
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -205,28 +232,28 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
       {loading && (
         <div className="flex justify-center items-center w-[50vw] h-screen">
           <div className="spinner-border inline-block text-3xl" role="status">
-            <motion.div
-              key={counter % loadingArray.length}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.5 }}
-              className="relative"
-            >
-              <div className="absolute inset-0 bg-gradient-to-r from-transparent via-orange-500 to-transparent animate-shimmer"
-                style={{
-                  backgroundSize: '200% 100%',
-                  animation: '2s infinite linear'
-                }}
-              />
-              {loadingArray[loadingIndex]}
-            </motion.div>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={loadingIndex}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="relative"
+              >
+                <span className="bg-clip-text font-bold text-transparent bg-gradient-to-r from-[#ef7f1a] from-30%  via-black via-70% to-[#ef7f1a] animate-gradient-x"
+                >
+                  {loadingArray[loadingIndex]}
+                </span>
+              </motion.div>
+            </AnimatePresence>
           </div>
         </div>
       )}
 
       {!loading && nextIteration !== "true" && formData.length > 0 && (
         <div className="p-2 my-4">
+          <h2 className='text-3xl font-bold'>Read carefully, and answer the questions below</h2>
           <div className="text-center mb-4">
 
           </div>
@@ -238,9 +265,9 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 0 }}
                 transition={{ duration: 0.3 }}
-                className='flex items-center gap-2'
+                className='flex gap-2 items-center'
               >
-                <p className='text-white bg-black rounded-full mx-auto flex w-8 h-8 items-center justify-center text-lg italic font-bold'>{currentQuestionIndex + 1}</p>
+                <p className='text-white bg-black rounded-full  flex w-8 h-8 items-center justify-center text-lg italic font-bold'>{currentQuestionIndex + 1}</p>
                 <p className='text-black text-lg w-fit'>{formData[currentQuestionIndex].question}</p>
               </motion.div>
             )}
@@ -256,7 +283,7 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
               value={formData[currentQuestionIndex].answer}
               placeholder='answer'
               onChange={(e) => handleInputChange(currentQuestionIndex, e.target.value)}
-              className="p-2 rounded-md h-[256px] bg-white/50 w-full text-black  border border-black mt-2 focus:outline-none"
+              className="p-2 rounded-md h-[256px] bg-[#F0E5E5] border-dashed border-[#e2d6d6] w-full text-black  border mt-2 focus:outline-none"
             />
           </AnimatePresence>
 
@@ -321,12 +348,9 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
             <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
               Generate More Questions
             </button>
-            <button onClick={handleEditResume} className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
-              Edit Resume
-            </button>
-            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
-              Download Resume
-            </button>
+            <Link href="/edit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
+              Edit & Download
+            </Link>
           </div>
         </div>
       )}
@@ -336,12 +360,9 @@ const Questions = ({ questions, snippets, resume, setResume, setQuestions, setSn
           <p className='text-3xl font-bold'>✅ Your Resume is good to go!</p>
           <p className='text-xl'>You can either download it or edit it first</p>
           <div className='flex  gap-2'>
-            <button type="submit" className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
-              Download Resume
-            </button>
-            <button onClick={handleEditResume} className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
-              Edit Resume
-            </button>
+            <Link className="mt-4 text-white font-bold py-2 px-4 rounded-full bg-black/50 w-fit mx-auto hover:bg-[#ef7f1a] duration-100 ">
+              Edit & Download
+            </Link>
           </div>
         </div>
       )}

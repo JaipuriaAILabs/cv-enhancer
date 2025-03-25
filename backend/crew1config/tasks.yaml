@@ -1,6 +1,10 @@
 snippet_identification_task:
   description: >
-    Identify snippets from the markdown resume - {resume} that contain gaps, are irrelevant, contain errors, are inconsistent, or are otherwise problematic. Focus on the following guidelines to ensure high-quality resumes for Indian students with PGDM or MBA degrees:
+    Identify snippets from the resume - {resume} that contain gaps, are irrelevant, contain errors, are inconsistent, or are otherwise problematic. Focus on the following guidelines to ensure high-quality resumes for Indian students with PGDM or MBA degrees:
+
+    - Do not generate unimportant snippets, that ask about the social media links, dob, etc. Only generate relevant snippets that indicate serious flaws in the resume.
+    - if a field is not present in the resume, ignore it and do not generate a snippet for it.
+
 
     - Clarity: Ensure information is clearly presented and easy to understand
     - Quantifiable Achievements: Look for achievements that lack specific metrics or numbers
@@ -9,7 +13,7 @@ snippet_identification_task:
     - Professional Tone: Ensure language maintains appropriate professionalism
     - Skills Emphasis: Check if key skills are properly highlighted
 
-    The identified snippets will guide questions for the candidate, ensuring resume updates are factually accurate. Generate only 5 snippets. {evaluation}
+    The identified snippets will guide questions for the candidate, ensuring resume updates are factually accurate. Generate only 10 snippets. {evaluation}
 
    
   
@@ -36,8 +40,11 @@ snippet_identification_task:
   agent: question_generator
 
 generate_questions_task:
-  description: Create a set of questions based for the resume - {resume} that address gaps, language issues, inconsistencies, and irrelevant points. The answers to these questions will be used to update the resume to fill in the gaps and inconsistencies, so do not ask generic questions, OR INTERVIEW QUESTIONS whose answers are not NEEDED TO BE PRESENT IN THE RESUME.
-  expected_output: An ARRAY of STRINGS (MAKE SURE TO ONLY RETURN AT MAX 5 QUESTIONS), where each string is a question designed to probe for details and clarify ambiguities in the resume. 
+  description: >
+   Create a set of questions based for the resume - {resume} that address gaps, language issues, inconsistencies, and irrelevant points. The answers to these questions will be used to update the resume to fill in the gaps and inconsistencies, so do not ask generic questions, OR INTERVIEW QUESTIONS whose answers are not NEEDED TO BE PRESENT IN THE RESUME.
+
+   - Do not ask 2 questions posed as one (questions with an and/or in between). keep the questions short and concise and to the point. 
+  expected_output: An ARRAY of STRINGS (MAKE SURE TO ONLY RETURN AT MAX 10 QUESTIONS), where each string is a question designed to probe for details and clarify ambiguities in the resume. 
   example_output: |
     [
       "What specific tasks did you handle during your internship?",
